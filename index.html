@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Produktiflah — To-Do List Tim</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<div class="app-container">
+    <div class="app-header">
+        <div class="header-top">
+            <h1><i class="fas fa-check-circle" style="color:#3b82f6;"></i> Produktiflah</h1>
+            <div class="header-actions">
+                <div class="theme-switcher">
+                    <button class="theme-btn" data-theme="light" title="Mode Terang"><i class="fas fa-sun"></i></button>
+                    <button class="theme-btn" data-theme="glass" title="Mode Glass (iOS)"><i class="fas fa-moon"></i></button>
+                </div>
+                <button id="infoBtn" class="btn-icon"><i class="fas fa-users"></i> Info Tim</button>
+            </div>
+        </div>
+        <div class="nav-tabs">
+            <button class="nav-btn active" data-page="tasks"><i class="fas fa-tasks"></i> Aktif</button>
+            <button class="nav-btn" data-page="completed"><i class="fas fa-check-double"></i> Selesai</button>
+            <button class="nav-btn" data-page="stats"><i class="fas fa-chart-line"></i> Statistik</button>
+        </div>
+    </div>
+
+    <!-- Halaman Tugas Aktif -->
+    <div id="tasksPage" class="page active-page">
+        <button id="openAddModalBtn" class="btn-add"><i class="fas fa-plus"></i> Tambah Tugas</button>
+        <div class="filter-bar">
+            <input type="text" id="searchActive" placeholder="Cari tugas...">
+            <select id="filterPriorityActive">
+                <option value="all">Semua Prioritas</option>
+                <option value="high">Tinggi</option>
+                <option value="medium">Sedang</option>
+                <option value="low">Rendah</option>
+            </select>
+            <select id="filterCategoryActive">
+                <option value="all">Semua Kategori</option>
+            </select>
+        </div>
+        <div id="activeTasksContainer" class="tasks-grid"></div>
+    </div>
+
+    <!-- Halaman Selesai -->
+    <div id="completedPage" class="page">
+        <div class="filter-bar">
+            <input type="text" id="searchCompleted" placeholder="Cari tugas selesai...">
+            <select id="filterPriorityCompleted">
+                <option value="all">Semua Prioritas</option>
+                <option value="high">Tinggi</option>
+                <option value="medium">Sedang</option>
+                <option value="low">Rendah</option>
+            </select>
+            <select id="filterCategoryCompleted">
+                <option value="all">Semua Kategori</option>
+            </select>
+        </div>
+        <button id="clearAllCompletedBtn" class="btn-icon" style="background:#676666; color:#ffffff;"><i class="fas fa-trash-alt"></i> Hapus Semua Selesai</button>
+        <div style="margin-top: 1rem;" id="completedTasksContainer" class="tasks-grid"></div>
+    </div>
+
+    <!-- Halaman Statistik -->
+    <div id="statsPage" class="page">
+        <div class="stats-grid">
+            <div class="stat-card"><i class="fas fa-list"></i> <h3 id="totalTasksStat">0</h3><p>Total Tugas</p></div>
+            <div class="stat-card"><i class="fas fa-check-circle"></i> <h3 id="completedTasksStat">0</h3><p>Selesai</p></div>
+            <div class="stat-card"><div class="progress-bar-bg"><div class="progress-fill" id="progressFill"></div></div><p id="completionPercent">0%</p></div>
+        </div>
+        <div style="background:white; border-radius:1.5rem; padding:1rem; margin-bottom:1rem;" class="stats-card-bg">
+            <h3>Per Kategori</h3>
+            <div id="categorySummary"></div>
+        </div>
+        <div>
+            <h3>Kelola Kategori <button id="addCategoryBtn" style="float:right; background:#3b82f6; color:white; border:none; border-radius:2rem; padding:5px 12px;">+ Tambah</button></h3>
+            <br>
+            <div id="categoriesList"></div>
+        </div>
+    </div>
+
+    <!-- FOOTER KREDIT TIM -->
+    <div class="custom-footer">
+        © 2026 · Design by students of Prisma Nusanta Vocational School
+        <br>
+        <br>
+        • <span>Farhan</span> • <span>Darul</span> • <span>Melinda</span> • <span>Dea</span>
+        <br>
+        <br><small> -Hiduplah Bersenang senanglah dan bekerjalah-  </small>
+        <br>
+    </div>
+</div>
+
+<!-- Modal Tambah/Edit -->
+<div id="taskModal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitle">Tugas Baru</h3>
+        <input type="text" id="taskTitleInput" placeholder="Nama tugas" style="width:100%; margin:8px 0; padding:10px; border-radius:1rem; border:1px solid #cbd5e1;">
+        <input type="date" id="taskDueDate" style="width:100%; margin:8px 0; padding:10px; border-radius:1rem;">
+        <input type="number" id="taskEstimate" placeholder="Estimasi waktu (menit)" style="width:100%; margin:8px 0; padding:10px; border-radius:1rem; border:1px solid #cbd5e1;">
+        <select id="taskPriority" style="width:100%; margin:8px 0; padding:10px; border-radius:1rem;">
+            <option value="low">Rendah</option>
+            <option value="medium">Sedang</option>
+            <option value="high">Tinggi</option>
+        </select>
+        <select id="taskCategory" style="width:100%; margin:8px 0; padding:10px; border-radius:1rem;"></select>
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <button id="closeModalBtn" style="background:#e2e8f0; border:none; padding:8px 16px; border-radius:2rem;">Batal</button>
+            <button id="saveTaskBtn" style="background:#3b82f6; color:white; border:none; padding:8px 16px; border-radius:2rem;">Simpan</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Info Tim -->
+<div id="infoModal" class="info-modal">
+    <div class="info-modal-content">
+        <img class="logo-sekolah" src="foto/WhatsApp Image 2026-04-25 at 09.25.58.jpeg" alt="">
+        <h3><i class="fas fa-code"></i> Made by students of Prisma Nusanta Vocational School</h3>
+        <br>
+        <div class="info-avatar">
+            <div class="info-card"><img class="img" src="foto/orang-ganteng.jpeg" alt=""><i class="fas fa-user-astronaut"></i> <strong>Farhan</strong><br>Frontend</div>
+            <div class="info-card"><img class="img" src="foto/darul.jpeg" alt=""><i class="fas fa-database"></i> <strong>Darul</strong><br>Backend</div>
+            <div class="info-card"><img class="img" src="foto/meli.jpeg" alt=""><i class="fas fa-palette"></i> <strong>Melinda</strong><br>UI/UX</div>
+            <div class="info-card"><img class="img" src="foto/dea.jpeg" alt=""><i class="fas fa-mobile-alt"></i> <strong>Dea</strong><br>Mobile</div>
+        </div>
+        <br>
+        <p style="margin-top: 10px;"> Produktiflah, aplikasi To-Do List dengan penyimpanan lokal </p>
+        <br>
+        <button id="closeInfoBtn" style="background:#3b82f6; color:white; border:none; padding:8px 20px; border-radius:2rem; margin-top:20px;">Tutup</button>
+    </div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
